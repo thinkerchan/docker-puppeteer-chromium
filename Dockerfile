@@ -1,20 +1,28 @@
 FROM node:18-slim
 
-# 设置工作目录
+# 安装必要的依赖
+RUN apt-get update && apt-get install -y \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxi6 \
+    libxtst6 \
+    libnss3 \
+    libcups2 \
+    libxss1 \
+    libxrandr2 \
+    libasound2 \
+    libpangocairo-1.0-0 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libgtk-3-0 \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /usr/src/app
-
-# 复制 package.json 和 package-lock.json
 COPY package*.json ./
-
-# 安装依赖
 RUN npm config set registry https://registry.npmmirror.com
 RUN npm install
-
-# 复制源代码
 COPY . .
-
-# 暴露端口
 EXPOSE 3000
-
-# 启动应用
 CMD ["node", "index.js"]
