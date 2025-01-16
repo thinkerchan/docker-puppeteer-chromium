@@ -1,4 +1,3 @@
-// index.js
 const express = require('express');
 const puppeteer = require('puppeteer-core');
 const app = express();
@@ -6,18 +5,15 @@ const port = 3000;
 
 app.use(express.json());
 
-// 创建一个全局的浏览器实例
 let browser;
 
-// 启动浏览器
 async function initBrowser() {
   browser = await puppeteer.launch({
-    executablePath: '/usr/bin/chromium-browser',
+    executablePath: '/usr/bin/chromium-browser',  // 使用宿主机的 Chromium
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-gpu'
+      '--disable-dev-shm-usage'
     ],
     headless: 'new'
   });
