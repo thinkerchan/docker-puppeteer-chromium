@@ -1,9 +1,10 @@
 FROM node:18-slim
 
 # 设置 Debian 镜像源为中科大源
-RUN echo "deb https://mirrors.ustc.edu.cn/debian/ bookworm main contrib non-free non-free-firmware" > /etc/apt/sources.list \
-    && echo "deb https://mirrors.ustc.edu.cn/debian/ bookworm-updates main contrib non-free non-free-firmware" >> /etc/apt/sources.list \
-    && echo "deb https://mirrors.ustc.edu.cn/debian-security bookworm-security main contrib non-free non-free-firmware" >> /etc/apt/sources.list
+RUN echo "deb [trusted=yes] https://mirrors.ustc.edu.cn/debian/ bookworm main contrib non-free non-free-firmware" > /etc/apt/sources.list \
+    && echo "deb [trusted=yes] https://mirrors.ustc.edu.cn/debian/ bookworm-updates main contrib non-free non-free-firmware" >> /etc/apt/sources.list \
+    && echo "deb [trusted=yes] https://mirrors.ustc.edu.cn/debian-security bookworm-security main contrib non-free non-free-firmware" >> /etc/apt/sources.list \
+    && rm -rf /etc/apt/sources.list.d/*
 
 # 优化apt安装过程并减小镜像大小，添加chromium
 RUN apt-get update && apt-get install -y --no-install-recommends \
