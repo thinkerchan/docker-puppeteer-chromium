@@ -1,14 +1,12 @@
 FROM node:18-slim
 
-# 使用清华镜像源加速apt安装
-RUN echo "\
-deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm main contrib non-free non-free-firmware\n\
-deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm-updates main contrib non-free non-free-firmware\n\
-deb https://mirrors.tuna.tsinghua.edu.cn/debian-security bookworm-security main contrib non-free non-free-firmware\
-" > /etc/apt/sources.list
+# 使用阿里云镜像源加速apt安装
+RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list && \
+    sed -i 's/security.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list
 
-# 优化apt安装过程并减小镜像大小
+# 优化apt安装过程并减小镜像大小，添加chromium
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    chromium \
     ca-certificates \
     fonts-liberation \
     libasound2 \
@@ -52,6 +50,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
     && mkdir -p /home/pptruser \
     && chown -R pptruser:pptruser /home/pptruser
+
+# 设置puppeteer环境变量
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 # 设置工作目录
 WORKDIR /usr/src/app

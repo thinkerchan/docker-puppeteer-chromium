@@ -9,7 +9,7 @@ let browser;
 
 async function initBrowser() {
   browser = await puppeteer.launch({
-    executablePath: '/usr/bin/chromium-browser',  // 使用宿主机的 Chromium
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
