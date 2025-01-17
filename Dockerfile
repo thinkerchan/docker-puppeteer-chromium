@@ -8,9 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     chromium \
     ca-certificates \
     fonts-liberation \
-    fonts-noto-cjk \
-    fonts-wqy-zenhei \
-    fonts-wqy-microhei \
+    fonts-noto-sans-cjk \
     libasound2 \
     libatk-bridge2.0-0 \
     libatk1.0-0 \
