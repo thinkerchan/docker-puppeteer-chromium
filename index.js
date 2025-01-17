@@ -19,6 +19,7 @@ async function initBrowser() {
   });
 }
 
+const Timeout = 120*1000;
 // 初始化浏览器
 initBrowser().catch(console.error);
 
@@ -28,8 +29,8 @@ app.get('/health', (req, res) => {
 });
 
 // 截图端点
-app.post('/screenshot', async (req, res) => {
-  const { url } = req.body;
+app.get('/screenshot', async (req, res) => {
+  const { url } = req.query;
 
   if (!url) {
     return res.status(400).json({ error: 'URL is required' });
@@ -41,7 +42,7 @@ app.post('/screenshot', async (req, res) => {
 
     await page.goto(url, {
       waitUntil: 'networkidle0',
-      timeout: 30000
+      timeout: Timeout
     });
 
     const screenshot = await page.screenshot({
