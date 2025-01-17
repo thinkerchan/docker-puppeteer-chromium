@@ -5,11 +5,14 @@ RUN echo "deb https://mirrors.ustc.edu.cn/debian/ bookworm main contrib non-free
     && echo "deb https://mirrors.ustc.edu.cn/debian/ bookworm-updates main contrib non-free non-free-firmware" >> /etc/apt/sources.list \
     && echo "deb https://mirrors.ustc.edu.cn/debian-security bookworm-security main contrib non-free non-free-firmware" >> /etc/apt/sources.list
 
-# 优化apt安装过程并减小镜像大小，添加chromium
+# 优化apt安装过程并减小镜像大小，添加chromium和中文字体
 RUN apt-get update && apt-get install -y --no-install-recommends \
     chromium \
     ca-certificates \
     fonts-liberation \
+    fonts-noto-cjk \
+    fonts-wqy-zenhei \
+    fonts-wqy-microhei \
     libasound2 \
     libatk-bridge2.0-0 \
     libatk1.0-0 \
