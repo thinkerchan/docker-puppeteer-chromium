@@ -1,5 +1,8 @@
 FROM node:18-slim
 
+# 在FROM之后，RUN apt-get之前添加
+RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+
 # Install additional dependencies required for Chrome
 RUN apt-get update && apt-get install -y \
     ca-certificates \
