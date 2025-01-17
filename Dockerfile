@@ -1,7 +1,9 @@
 FROM node:18-slim
 
 # 设置 Debian 镜像源为清华源
-RUN sed -i 's/deb.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
+RUN echo "deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye main contrib non-free" > /etc/apt/sources.list \
+    && echo "deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye-updates main contrib non-free" >> /etc/apt/sources.list \
+    && echo "deb https://mirrors.tuna.tsinghua.edu.cn/debian-security bullseye-security main contrib non-free" >> /etc/apt/sources.list
 
 # 优化apt安装过程并减小镜像大小，添加chromium
 RUN apt-get update && apt-get install -y --no-install-recommends \
