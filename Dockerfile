@@ -1,10 +1,14 @@
 FROM node:18-slim
 
-# 在FROM之后，RUN apt-get之前添加
-RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+# 使用清华镜像源加速apt安装
+RUN echo "\
+deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm main contrib non-free non-free-firmware\n\
+deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm-updates main contrib non-free non-free-firmware\n\
+deb https://mirrors.tuna.tsinghua.edu.cn/debian-security bookworm-security main contrib non-free non-free-firmware\
+" > /etc/apt/sources.list
 
-# Install additional dependencies required for Chrome
-RUN apt-get update && apt-get install -y \
+# 优化apt安装过程并减小镜像大小
+RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     fonts-liberation \
     libasound2 \
@@ -41,30 +45,29 @@ RUN apt-get update && apt-get install -y \
     lsb-release \
     wget \
     xdg-utils \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Create a non-root user
+# 创建非root用户
 RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
     && mkdir -p /home/pptruser \
     && chown -R pptruser:pptruser /home/pptruser
 
-# Set working directory
+# 设置工作目录
 WORKDIR /usr/src/app
 
-# Copy package files
+# 分层复制package文件以利用缓存
 COPY package*.json ./
 
-# Set npm registry and install dependencies
-RUN npm config set registry https://registry.npmmirror.com
-RUN npm install
+# 设置npm镜像并安装依赖
+RUN npm config set registry https://registry.npmmirror.com \
+    && npm install --production \
+    && npm cache clean --force
 
-# Copy application code
-COPY . .
+# 复制应用代码
+COPY --chown=pptruser:pptruser . .
 
-# Set correct permissions
-RUN chown -R pptruser:pptruser /usr/src/app
-
-# Switch to non-root user
+# 切换到非root用户
 USER pptruser
 
 EXPOSE 3000
