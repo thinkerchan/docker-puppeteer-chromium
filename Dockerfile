@@ -1,9 +1,7 @@
 FROM node:18-slim
 
-# 使用阿里云镜像源加速apt安装
-RUN echo "deb http://mirrors.aliyun.com/debian/ bullseye main contrib non-free" > /etc/apt/sources.list && \
-    echo "deb http://mirrors.aliyun.com/debian/ bullseye-updates main contrib non-free" >> /etc/apt/sources.list && \
-    echo "deb http://mirrors.aliyun.com/debian-security bullseye-security main contrib non-free" >> /etc/apt/sources.list
+RUN sed -i 's/http:\/\/archive.ubuntu.com\/ubuntu\//http:\/\/mirrors.tuna.tsinghua.edu.cn\/ubuntu\//g' /etc/apt/sources.list
+
 
 # 优化apt安装过程并减小镜像大小，添加chromium
 RUN apt-get update && apt-get install -y --no-install-recommends \
