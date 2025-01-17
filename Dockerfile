@@ -1,20 +1,12 @@
-# 使用 Node.js 18 的官方精简版镜像作为基础镜像
 FROM node:18-slim
 
-# 设置镜像源为国内的阿里云镜像，并确保证书正确
-RUN echo "deb https://mirrors.aliyun.com/debian/ bookworm main contrib non-free non-free-firmware" > /etc/apt/sources.list && \
-    echo "deb https://mirrors.aliyun.com/debian/ bookworm-updates main contrib non-free non-free-firmware" >> /etc/apt/sources.list && \
-    echo "deb https://mirrors.aliyun.com/debian-security bookworm-security main contrib non-free non-free-firmware" >> /etc/apt/sources.list && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends \
-    ca-certificates && \
-    update-ca-certificates && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# 设置 Debian 镜像源为腾讯云源
+RUN sed -i 's/deb.debian.org/mirrors.cloud.tencent.com/g' /etc/apt/sources.list.d/debian.sources
 
-# 安装必要的依赖
+# 优化apt安装过程并减小镜像大小，添加chromium和中文字体
 RUN apt-get update && apt-get install -y --no-install-recommends \
     chromium \
+    ca-certificates \
     fonts-liberation \
     fonts-noto-cjk \
     fonts-wqy-zenhei \
@@ -52,21 +44,36 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxtst6 \
     lsb-release \
     wget \
-    xdg-utils && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    xdg-utils \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# 创建非root用户
+RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
+    && mkdir -p /home/pptruser \
+    && chown -R pptruser:pptruser /home/pptruser
+
+# 设置puppeteer环境变量
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 # 设置工作目录
-WORKDIR /app
+WORKDIR /usr/src/app
 
-# 将本地代码复制到容器中
-COPY . .
+# 分层复制package文件以利用缓存
+COPY package*.json ./
 
-# 安装项目依赖
-RUN npm install
+# 设置npm镜像并安装依赖
+RUN npm config set registry https://registry.npmmirror.com \
+    && npm install --production \
+    && npm cache clean --force
 
-# 暴露应用运行的端口
+# 复制应用代码
+COPY --chown=pptruser:pptruser . .
+
+# 切换到非root用户
+USER pptruser
+
 EXPOSE 3000
 
-# 启动应用
-CMD ["npm", "start"]
+CMD ["node", "index.js"]
