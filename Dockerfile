@@ -32,6 +32,9 @@ RUN npm config set registry https://registry.npmmirror.com \
     && npm install --production \
     && npm cache clean --force
 
+# 复制应用程序代码
+COPY . .
+
 EXPOSE 3000
 
 CMD ["node", "index.js"]
