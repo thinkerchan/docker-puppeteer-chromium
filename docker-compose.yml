@@ -1,20 +1,22 @@
-# docker-compose.yml
-version: '3'
-services:
-  app:
-    build: .
-    ports:
-      - "2337:3000"
-    environment:
-      - CHROME_URL=ws://chrome:3000
-    depends_on:
-      - chrome
+version: '3.8'
 
+services:
   chrome:
     image: browserless/chrome:latest
-    ports:
-      - "3001:3000"
     environment:
-      - MAX_CONCURRENT_SESSIONS=15
+      - MAX_CONCURRENT_SESSIONS=10
       - CONNECTION_TIMEOUT=300000
       - MAX_QUEUE_LENGTH=20
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+  app:
+    build: .
+    environment:
+      - CHROME_URL=ws://chrome:3000
+    ports:
+      - "2337:8080"
+    depends_on:
+      - chrome
+    restart: unless-stopped
