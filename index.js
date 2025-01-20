@@ -11,15 +11,10 @@ let browser;
 
 // 启动浏览器
 async function initBrowser() {
-  browser = await puppeteer.launch({
-    executablePath: '/usr/bin/chromium-browser',
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-gpu'
-    ],
-    headless: 'new'
+  browser = await puppeteer.connect({
+    browserWSEndpoint: process.env.CHROME_URL,
+    ignoreDefaultArgs: ['--disable-extensions'],
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
   });
 }
 
