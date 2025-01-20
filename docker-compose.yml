@@ -2,21 +2,30 @@ version: '3.8'
 
 services:
   chrome:
-    image: browserless/chrome:latest
+    image: zenika/alpine-chrome:latest
     environment:
       - MAX_CONCURRENT_SESSIONS=10
       - CONNECTION_TIMEOUT=300000
       - MAX_QUEUE_LENGTH=20
     ports:
       - "3001:3000"
-    restart: "no"
+    restart: 'no'
+    security_opt:
+      - seccomp=unconfined
+    shm_size: '2gb'
 
   app:
     build: .
     environment:
       - CHROME_URL=ws://chrome:3000
+      - NODE_ENV=production
     ports:
       - "2337:8080"
     depends_on:
       - chrome
-    restart: "no"
+    restart: 'no'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
