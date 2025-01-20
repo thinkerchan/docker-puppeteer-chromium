@@ -32,8 +32,8 @@ app.get('/health', (req, res) => {
 });
 
 // 截图端点
-app.post('/screenshot', async (req, res) => {
-  const { url } = req.body;
+app.get('/screenshot', async (req, res) => {
+  const { url } = req.query;
 
   if (!url) {
     return res.status(400).json({ error: 'URL is required' });
