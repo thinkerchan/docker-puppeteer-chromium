@@ -2,7 +2,7 @@
 const express = require('express');
 const puppeteer = require('puppeteer-core');
 const app = express();
-const port = 8080 ;
+const port = 3000 ;
 
 app.use(express.json());
 
@@ -11,10 +11,15 @@ let browser;
 
 // 启动浏览器
 async function initBrowser() {
-  browser = await puppeteer.connect({
-    browserWSEndpoint: process.env.CHROME_URL,
-    ignoreDefaultArgs: ['--disable-extensions'],
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
+  browser = await puppeteer.launch({
+    executablePath: '/usr/bin/chromium-browser',
+    headless: true,
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-gpu',
+      '--disable-dev-shm-usage', // 避免内存共享问题
+    ],
   });
 }
 
