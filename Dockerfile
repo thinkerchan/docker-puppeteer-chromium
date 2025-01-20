@@ -32,9 +32,6 @@ RUN npm config set registry https://registry.npmmirror.com \
     && npm install --production \
     && npm cache clean --force
 
-# 创建chromium目录用于挂载
-RUN mkdir -p /usr/bin/chromium-browser
-
 EXPOSE 3000
 
 CMD ["node", "index.js"]
