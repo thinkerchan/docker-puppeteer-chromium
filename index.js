@@ -2,7 +2,7 @@
 const express = require('express');
 const puppeteer = require('puppeteer-core');
 const app = express();
-const port = 3000 ;
+const port = 4000 ;
 
 app.use(express.json());
 
@@ -12,7 +12,7 @@ let browser;
 // 启动浏览器
 async function initBrowser() {
   browser = await puppeteer.launch({
-    executablePath: '/usr/bin/chromium-browser',
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
     headless: true,
     args: [
       '--no-sandbox',
@@ -44,8 +44,8 @@ app.get('/screenshot', async (req, res) => {
     await page.setViewport({ width: 1280, height: 800 });
 
     await page.goto(url, {
-      waitUntil: 'networkidle0',
-      timeout: 30000
+      waitUntil: ['networkidle0', 'domcontentloaded'],
+      timeout: 60*1000
     });
 
     const screenshot = await page.screenshot({

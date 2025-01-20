@@ -20,12 +20,12 @@ services:
       - CHROME_URL=ws://chrome:3000
       - NODE_ENV=production
     ports:
-      - "2337:8080"
+      - "4000:4000"
     depends_on:
       - chrome
     restart: 'no'
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
       interval: 30s
       timeout: 10s
       retries: 3

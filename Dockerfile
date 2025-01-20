@@ -1,25 +1,21 @@
-# 使用 alpine-chrome 基础镜像
-FROM zenika/alpine-chrome:latest
+FROM zenika/alpine-chrome:with-node
 
-USER root
-# 安装 Node.js 和相关依赖
-RUN apk add --no-cache \
-        nodejs \
-        npm \
-        ttf-freefont # 渲染所需字体
+
+ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium-browser
 
 # 设置工作目录
-WORKDIR /app
+WORKDIR /usr/src/app
 
-# 复制项目文件
-COPY package.json ./
-COPY index.js ./
-
-# 安装依赖
+# 首先复制package文件以利用Docker缓存
+COPY --chown=chrome package*.json ./
 RUN npm install --production
 
-# 暴露端口
-EXPOSE 3000
+# 复制应用代码
+COPY --chown=chrome . .
 
-# 启动服务
+# 暴露应用端口
+EXPOSE 4000
+
+
+# 启动应用
 CMD ["node", "index.js"]
