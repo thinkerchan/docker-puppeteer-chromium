@@ -12,7 +12,7 @@ let browser;
 // 启动浏览器
 async function initBrowser() {
   browser = await puppeteer.connect({
-    browserWSEndpoint: 'ws://120.24.189.83:3001/',
+    browserWSEndpoint: process.env.CHROME_URL,
     ignoreDefaultArgs: ['--disable-extensions'],
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
   });
