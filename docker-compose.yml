@@ -9,7 +9,7 @@ services:
       - MAX_QUEUE_LENGTH=20
     ports:
       - "3000:3000"
-    restart: no
+    restart: "no"
 
   app:
     build: .
@@ -19,4 +19,4 @@ services:
       - "2337:8080"
     depends_on:
       - chrome
-    restart: no
+    restart: "no"
